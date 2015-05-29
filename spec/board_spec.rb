@@ -184,8 +184,7 @@ describe Board do
       #   -------------------------------------
       #   1  | 2  | 3  | 4  | 5  | 6  | 7  | 8
 
-      piece_to_move = empty_board.locate_piece(2, 4)  # the white pawn
-      
+      piece_to_move = empty_board.locate_piece(2, 4)  # the white pawn      
       expect {
         empty_board.make_move(piece_to_move.color, 3, 4)
       }.to raise_error(Board::KingInCheckError)

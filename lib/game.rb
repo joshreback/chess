@@ -3,7 +3,7 @@ require 'pry'
 class Game
   def initialize
     @players = [:white, :black].cycle
-    @board = Board.new
+    @board = Board.new()
   end
 
   attr_accessor :current_player, :board

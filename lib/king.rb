@@ -97,6 +97,6 @@ class King < Piece
   end
 
   def castling_through_check?(board, castle_columns)
-    castle_columns.any? { |c| board.can_be_targeted?(self.color, self.row, c) }
+    castle_columns.any? { |c| board.can_target?(self.color, self.row, c) }
   end
 end

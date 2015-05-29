@@ -20,4 +20,8 @@ class Piece
   def to_s
     " #{color[0].upcase}#{self.class.symbol} "
   end
+
+  def update!(row, column)
+    self.row, self.column = row, column
+  end
 end
