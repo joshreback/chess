@@ -8,7 +8,7 @@ class Pawn < Piece
     @start_row = color == :white ? 1 : 6
   end
 
-  def valid_move?(row, col, board)
+  def move_type(row, col, board)
     # forward move
     if forward_move?(row, col)
       valid_forward_move?(row, col, board)

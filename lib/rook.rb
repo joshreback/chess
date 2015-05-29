@@ -10,7 +10,7 @@ class Rook < Piece
   
   attr_accessor :checked, :moved
 
-  def valid_move?(row, column, board)
+  def move_type(row, column, board)
     valid_lateral_move?(row, column, board)  
   end
 end

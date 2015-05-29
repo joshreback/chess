@@ -3,41 +3,41 @@ require 'pry'
 describe King do
   let(:board) { Board.new(empty=true) }
 
-  describe 'valid_move?' do
+  describe 'move_type' do
     context 'basic move functionality' do
       let(:king)    { King.new({ row: 4, column: 1, color: :white })}
       before(:each) { board.place(4, 1, king) }
 
       it 'accepts one forward onto empty square' do
-        expect(king.valid_move?(5, 1, board)).to be true
+        expect(king.move_type(5, 1, board)).to be true
       end
 
       it 'accepts one backward onto empty square' do
-        expect(king.valid_move?(3, 1, board)).to be true
+        expect(king.move_type(3, 1, board)).to be true
       end
 
       it 'accepts one to right onto empty square' do
-        expect(king.valid_move?(4, 2, board)).to be true
+        expect(king.move_type(4, 2, board)).to be true
       end
 
       it 'accepts one to left onto empty square' do
-        expect(king.valid_move?(4, 0, board)).to be true
+        expect(king.move_type(4, 0, board)).to be true
       end
 
       it 'accepts one to upper right onto empty square' do
-        expect(king.valid_move?(5, 2, board)).to be true
+        expect(king.move_type(5, 2, board)).to be true
       end
 
       it 'accepts one to upper left onto empty square' do
-        expect(king.valid_move?(5, 0, board)).to be true
+        expect(king.move_type(5, 0, board)).to be true
       end
 
       it 'accepts one to lower right onto empty square' do
-        expect(king.valid_move?(3, 2, board)).to be true
+        expect(king.move_type(3, 2, board)).to be true
       end
 
       it 'accepts one to lower left onto empty square' do
-        expect(king.valid_move?(3, 0, board)).to be true
+        expect(king.move_type(3, 0, board)).to be true
       end
     end
   end

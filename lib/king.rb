@@ -13,7 +13,7 @@ class King < Piece
 
   attr_accessor :checked, :moved
 
-  def valid_move?(row, column, board)
+  def move_type(row, column, board)
     legal = diagonal?(row, column, CAN_COVER) || straight?(row, column, CAN_COVER)
     return false if !legal
 

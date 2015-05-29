@@ -76,17 +76,19 @@ class Board
     piece_to_move
   end
 
-  def make_move(current_player, display_row, display_column)
+  # Need to be less coupling between board & piece
+  # These refactors will be made then
+  def make_move(current_player, display_row, display_column)    
     row, column = sanitize_input(display_row, display_column)
     king = find_players_king(current_player)
-    king.checked = true if can_target?(current_player, king.row, king.column)
+    king.checked = true if king && can_target?(current_player, king.row, king.column)
 
     # Store attributes to be able to revert move if necessary
     original_row    = piece_to_move.row
     original_column = piece_to_move.column
     original_player = piece_to_move.color
     
-    move_to_make = piece_to_move.valid_move?(row, column, self)    
+    move_to_make = piece_to_move.move_type(row, column, self)    
     if !move_to_make
       raise InvalidMoveError, "That is an illegal move"
     elsif move_to_make == true
@@ -116,8 +118,8 @@ class Board
   def can_target?(player, target_row, target_column)
     can_target = false
     traverse_board(Proc.new do |piece|      
-      if piece && piece.color != player
-        can_target = true if piece.valid_move?(target_row, target_column, self)
+      if piece.is_a?(Piece) && piece.color != player
+        can_target = true if piece.move_type(target_row, target_column, self)
       end
     end)    
     !!can_target
@@ -190,10 +192,9 @@ class Board
   end
 
   def find_players_king(player)
-    king = traverse_board(Proc.new do |piece|
-      if piece
-        return piece if piece.is_a?(King) && piece.color == player
-      end
+    king = nil
+    traverse_board(Proc.new do |piece|
+      king = piece if piece.is_a?(King) && piece.color == player
     end)
     king
   end

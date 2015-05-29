@@ -1,7 +1,7 @@
 class Knight < Piece
   @symbol = "N"
 
-  def valid_move?(row, column, board)
+  def move_type(row, column, board)
     legal = false
     legal ||= (self.row - row).abs == 2 && (self.column - column).abs == 1
     legal ||= (self.row - row).abs == 1 && (self.column - column).abs == 2

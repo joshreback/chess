@@ -4,7 +4,7 @@ require 'pry'
 describe Pawn do
   let(:board) { Board.new(empty=true) }
 
-  describe 'valid_move?' do
+  describe 'move_type' do
     context 'white' do
 
       context 'normal functionality' do
@@ -12,49 +12,49 @@ describe Pawn do
         before(:each) { board.place(1, 1, pawn) }
 
         it 'accepts one forward onto empty square' do
-          expect(pawn.valid_move?(2, 1, board)).to be true
+          expect(pawn.move_type(2, 1, board)).to be true
         end
 
         it 'accepts two forward from start onto empty square' do
-          expect(!!pawn.valid_move?(3, 1, board)).to be true
+          expect(!!pawn.move_type(3, 1, board)).to be true
         end
 
         it 'rejects two forward from non-start onto empty square' do
           pawn.row = 2 
           board.place(2, 1, pawn)
-          expect(pawn.valid_move?(4, 1, board)).to be false
+          expect(pawn.move_type(4, 1, board)).to be false
         end
 
         it 'rejects three forward' do
-          expect(pawn.valid_move?(6, 1, board)).to be false
+          expect(pawn.move_type(6, 1, board)).to be false
         end
 
         it 'rejects one forward onto occupied square' do
           board.place(2, 1, Pawn.new({row: 2, col: 1 }))
 
-          expect(pawn.valid_move?(2, 1, board)).to be false
+          expect(pawn.move_type(2, 1, board)).to be false
         end
 
         it 'rejects backwards moves' do
-          expect(pawn.valid_move?(0, 1, board)).to be false
+          expect(pawn.move_type(0, 1, board)).to be false
         end
 
         it 'rejects lateral moves' do
-          expect(pawn.valid_move?(1, 2, board)).to be false
+          expect(pawn.move_type(1, 2, board)).to be false
         end
 
         it 'rejects 1 square diagonals onto empty squares' do
-          expect(pawn.valid_move?(2, 2, board)).to be false
+          expect(pawn.move_type(2, 2, board)).to be false
         end
 
         it 'allows 1 square diagonal captures' do
           board.place(2, 2, Pawn.new({row: 2, col: 2, :color => :black }))
-          expect(pawn.valid_move?(2, 2, board)).to be true
+          expect(pawn.move_type(2, 2, board)).to be true
         end
 
         it 'rejects 1 square diagonals onto squares occupied by same color' do
           board.place(2, 1, Pawn.new({row: 2, col: 2, :color => :white }))
-          expect(pawn.valid_move?(2, 2, board)).to be false
+          expect(pawn.move_type(2, 2, board)).to be false
         end
       end
 
@@ -113,49 +113,49 @@ describe Pawn do
         before(:each) { board.place(6, 1, pawn) }
 
         it 'accepts one forward onto empty square' do
-          expect(pawn.valid_move?(5, 1, board)).to be true
+          expect(pawn.move_type(5, 1, board)).to be true
         end
 
         it 'accepts two forward from start onto empty square' do
-          expect(!!pawn.valid_move?(4, 1, board)).to be true
+          expect(!!pawn.move_type(4, 1, board)).to be true
         end
 
         it 'rejects two forward from non-start onto empty square' do
           pawn.row = 5
           board.place(5, 1, pawn)
-          expect(pawn.valid_move?(3, 1, board)).to be false
+          expect(pawn.move_type(3, 1, board)).to be false
         end
 
         it 'rejects three forward' do
-          expect(pawn.valid_move?(3, 1, board)).to be false
+          expect(pawn.move_type(3, 1, board)).to be false
         end
 
         it 'rejects one forward onto occupied square' do
           board.place(5, 1, Pawn.new({row: 5, col: 1 }))
 
-          expect(pawn.valid_move?(5, 1, board)).to be false
+          expect(pawn.move_type(5, 1, board)).to be false
         end
 
         it 'rejects backwards moves' do
-          expect(pawn.valid_move?(7, 1, board)).to be false
+          expect(pawn.move_type(7, 1, board)).to be false
         end
 
         it 'rejects lateral moves' do
-          expect(pawn.valid_move?(6, 2, board)).to be false
+          expect(pawn.move_type(6, 2, board)).to be false
         end
 
         it 'rejects 1 square diagonals onto empty squares' do
-          expect(pawn.valid_move?(5, 2, board)).to be false
+          expect(pawn.move_type(5, 2, board)).to be false
         end
 
         it 'allows 1 square diagonal captures' do
           board.place(5, 2, Pawn.new({row: 5, col: 2, :color => :white }))
-          expect(pawn.valid_move?(5, 2, board)).to be true
+          expect(pawn.move_type(5, 2, board)).to be true
         end
 
         it 'rejects 1 square diagonals onto squares occupied by same color' do
           board.place(5, 2, Pawn.new({row: 5, col: 2, :color => :black }))
-          expect(pawn.valid_move?(5, 2, board)).to be false
+          expect(pawn.move_type(5, 2, board)).to be false
         end
       end
 
