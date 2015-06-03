@@ -25,7 +25,6 @@ class Game
     begin
       print "Enter x, y of piece to move >>"
       response = gets.chomp.split(",")
-      # response = [3, 4]
       x, y = response.first.to_i, response.last.to_i
       board.locate_piece(x, y)
     rescue Board::IllegalSquareError, Board::NoPieceError => e

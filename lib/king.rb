@@ -15,9 +15,13 @@ class King < Piece
 
   def move_type(row, column, board)
     legal = diagonal?(row, column, CAN_COVER) || straight?(row, column, CAN_COVER)
-    return false if !legal
+    return {valid: false} if !legal
 
-    empty_square?(row, column, board) || capture?(row, column, board)
+    if empty_square?(row, column, board) || capture?(row, column, board)
+      { valid: true }
+    else
+      { valid: false }
+    end
   end
 
   def diagonal?(row, column, can_cover=false)

@@ -5,9 +5,13 @@ class Knight < Piece
     legal = false
     legal ||= (self.row - row).abs == 2 && (self.column - column).abs == 1
     legal ||= (self.row - row).abs == 1 && (self.column - column).abs == 2
-    return false if !legal
+    return {valid: false} if !legal
     
-    empty_square?(row, column, board) || capture?(row, column, board)
+    if empty_square?(row, column, board) || capture?(row, column, board)
+      { valid: true }
+    else
+      { valid: false }
+    end
   end
 
   def empty_square?(row, column, board)

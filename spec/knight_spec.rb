@@ -7,35 +7,35 @@ describe Knight do
 
     context 'legal moves' do
       it 'accepts two up and to the right' do
-        expect(knight.move_type(6, 3, board)).to be true
+        expect(knight.move_type(6, 3, board)[:valid]).to be true
       end
 
       it 'accepts two up and to the left' do
-        expect(knight.move_type(6, 1, board)).to be true
+        expect(knight.move_type(6, 1, board)[:valid]).to be true
       end
 
       it 'accepts two down and to the right' do
-        expect(knight.move_type(2, 3, board)).to be true
+        expect(knight.move_type(2, 3, board)[:valid]).to be true
       end
 
       it 'accepts two down and to the left' do
-        expect(knight.move_type(2, 1, board)).to be true
+        expect(knight.move_type(2, 1, board)[:valid]).to be true
       end
 
       it 'accepts two right and up' do
-        expect(knight.move_type(5, 4, board)).to be true
+        expect(knight.move_type(5, 4, board)[:valid]).to be true
       end
 
       it 'accepts two right and down' do
-        expect(knight.move_type(3, 4, board)).to be true
+        expect(knight.move_type(3, 4, board)[:valid]).to be true
       end
 
       it 'accepts two left and up' do
-        expect(knight.move_type(5, 4, board)).to be true
+        expect(knight.move_type(5, 4, board)[:valid]).to be true
       end
 
       it 'accepts two left and down' do
-        expect(knight.move_type(5, 0, board)).to be true
+        expect(knight.move_type(5, 0, board)[:valid]).to be true
       end
     end
 
@@ -43,19 +43,19 @@ describe Knight do
       it 'accepts legal move onto square occupied by other piece' do
         board.place(5, 0, Pawn.new({ row: 5, column: 0, color: :black }))
 
-        expect(knight.move_type(5, 0, board)).to be true
+        expect(knight.move_type(5, 0, board)[:valid]).to be true
       end
 
       it 'rejects legal move onto square occupied by same piece' do
         board.place(5, 0, Pawn.new({ row: 5, column: 0, color: :white }))
 
-        expect(knight.move_type(5, 0, board)).to be false
+        expect(knight.move_type(5, 0, board)[:valid]).to be false
       end
 
       it 'accepts legal move that skips over other pieces' do
         board.place(5, 1, Pawn.new({ row: 5, column: 0, color: :white }))
 
-        expect(knight.move_type(5, 0, board)).to be true
+        expect(knight.move_type(5, 0, board)[:valid]).to be true
       end
     end
   end

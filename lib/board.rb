@@ -12,7 +12,7 @@ class Board
     self.contents = empty ? empty_board() : starting_state()
   end
 
-  attr_accessor :contents, :en_passant_square, :piece_to_move
+  attr_accessor :contents, :exposed_en_passant_square, :piece_to_move
 
   def to_s
     output = ""
@@ -78,33 +78,31 @@ class Board
 
   # Need to be less coupling between board & piece
   # These refactors will be made then
-  def make_move(current_player, display_row, display_column)    
+  def make_move(moving_player, display_row, display_column)    
     row, column = sanitize_input(display_row, display_column)
-    king = find_players_king(current_player)
-    king.checked = true if king && can_target?(current_player, king.row, king.column)
-
-    # Store attributes to be able to revert move if necessary
-    original_row    = piece_to_move.row
-    original_column = piece_to_move.column
-    original_player = piece_to_move.color
+    original_row, original_column = piece_to_move.row, piece_to_move.column    
+    move_to_make = piece_to_move.move_type(row, column, self)
     
-    move_to_make = piece_to_move.move_type(row, column, self)    
-    if !move_to_make
+    if move_to_make[:valid]
+      place(piece_to_move.row, piece_to_move.column, nil)
+      place(row, column, piece_to_move)
+    else
       raise InvalidMoveError, "That is an illegal move"
-    elsif move_to_make == true
-      self.en_passant_square = nil
-      place(original_row, original_column, nil)
-      place(row, column, piece_to_move)
-    elsif move_to_make == :en_passant_capture
-      place(original_row, original_column, nil)
-      place(row, column, piece_to_move)
-    elsif move_to_make.has_key?(:en_passant_square)
-      self.en_passant_square = move_to_make[:en_passant_square]
-      place(original_row, original_column, nil)
-      place(row, column, piece_to_move)
     end
-    
-    if !king.nil? && king_in_check?(original_player)
+      
+    # if !move_to_make[:exposed_en_passant_square].nil?
+    #   self.exposed_en_passant_square 
+    # # elsif move_to_make == :en_passant_capture
+    # #   place(piece_to_move.row, piece_to_move.column, nil)
+    # #   place(row, column, piece_to_move)
+    # # elsif move_to_make.has_key?(:en_passant_square)
+    # #   self.en_passant_square = move_to_make[:en_passant_square]
+    # #   place(piece_to_move.row, piece_to_move.column, nil)
+    # #   place(row, column, piece_to_move)
+    # # end
+        
+    king = find_players_king(moving_player)
+    if !king.nil? && king_in_check?(moving_player)
       # restore original positions
       place(original_row, original_column, piece_to_move)
       place(row, column, nil)

@@ -10,12 +10,17 @@ class Pawn < Piece
 
   def move_type(row, col, board)
     # forward move
-    if forward_move?(row, col)
-      valid_forward_move?(row, col, board)
-    elsif diagonal_move?(row, col)
-      diagonal_capture?(row, col, board) || en_passant_capture?(row, col, board)
+    if forward_move?(row, col) && valid_forward_move?(row, col, board)
+      move = { valid: true }
+      if forward_diff(row) == 2
+        ep_row = color == :white ? row - 1 : row + 1
+        move[:exposed_en_passant_square] = Square.new(ep_row, column, color)
+      end
+      move
+    elsif diagonal_move?(row, col) && (diagonal_capture?(row, col, board) || en_passant_capture?(row, col, board))
+      { valid: true }
     else
-      false
+      { valid: false }
     end
   end
 
@@ -29,15 +34,8 @@ class Pawn < Piece
   def valid_forward_move?(row, col, board)
     num_squares = forward_diff(row)
     case 
-    when num_squares == 1
+    when num_squares == 1 || num_squares == 2
       board.at(row, col).nil?
-    when num_squares == 2
-      if self.row == @start_row && board.at(row, col).nil?
-        ep_row = color == :white ? @start_row + 1 : @start_row - 1
-        return { :en_passant_square => Square.new(ep_row, col, color) }
-      else
-        return false
-      end
     else
       false
     end

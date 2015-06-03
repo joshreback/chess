@@ -6,6 +6,10 @@ class Queen < Piece
   @symbol = "Q"
 
   def move_type(row, column, board)
-    valid_diagonal_move?(row, column, board) || valid_lateral_move?(row, column, board)
+    if valid_diagonal_move?(row, column, board) || valid_lateral_move?(row, column, board)
+      { valid: true }
+    else
+      { valid: false }
+    end
   end
 end
