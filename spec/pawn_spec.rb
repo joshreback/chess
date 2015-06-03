@@ -16,7 +16,7 @@ describe Pawn do
         end
 
         it 'accepts two forward from start onto empty square' do
-          expect(!!pawn.move_type(3, 1, board)[:valid]).to be true
+          expect(pawn.move_type(3, 1, board)[:valid]).to be true
         end
 
         it 'rejects two forward from non-start onto empty square' do
@@ -82,7 +82,7 @@ describe Pawn do
 
         it 'sets board en passant square on 2 moves forward' do
           execute_en_passant_setup()
-          square = board.en_passant_square
+          square = board.exposed_en_passant_square
           expect(square.row).to eq 5
           expect(square.column).to eq 3
           expect(square.color).to eq :black
@@ -90,16 +90,17 @@ describe Pawn do
 
         it 'accepts a valid en passant capture' do
           execute_en_passant_setup()
-          expect(!!capturing_pawn.en_passant_capture?(5, 3, board)[:valid]).to eq true
+          expect(capturing_pawn.en_passant_capture?(5, 3, board)).to eq true
         end
 
         it 'executes a valid en passant capture' do
           execute_en_passant_setup()
           board.locate_piece(5, 5)          # Locate the white piece
           board.make_move(:white, 6, 4)     # Move the white piece to the en passant square
-
-          expect(board.at(5, 3)[:valid]).to eq capturing_pawn  # Capturing pawn moved          
-          expect(board.at(4, 3)[:valid]).to be_nil             # Black pawn was captured 
+          binding.pry
+          
+          expect(board.at(5, 3)).to eq capturing_pawn  # Capturing pawn moved          
+          expect(board.at(4, 3)).to be_nil             # Black pawn was captured 
         end
 
         it 'rejects an invalid en passant capture - capturing pawn moved too late' do
@@ -113,7 +114,7 @@ describe Pawn do
           board.locate_piece(6, 4)        # locate the black pawn
           board.make_move(:black, 5, 4)   # make another move one square forward
 
-          expect(!!capturing_pawn.en_passant_capture?(5, 3, board)[:valid]).to eq false
+          expect(!!capturing_pawn.en_passant_capture?(5, 3, board)).to eq false
         end
       end
     end
@@ -183,7 +184,7 @@ describe Pawn do
 
         it 'sets board en passant square on 2 moves forward' do
           execute_en_passant_setup()
-          square = board.en_passant_square
+          square = board.exposed_en_passant_square
           expect(square.row).to eq 2
           expect(square.column).to eq 4
           expect(square.color).to eq :white
@@ -215,7 +216,7 @@ describe Pawn do
           board.locate_piece(3, 5)        # locate the black pawn
           board.make_move(:white, 4, 5)   # make another move one square forward
 
-          expect(!!capturing_pawn.en_passant_capture?(2, 4, board)[:valid]).to eq false
+          expect(!!capturing_pawn.en_passant_capture?(2, 4, board)).to eq false
         end
       end
     end

@@ -17,8 +17,10 @@ class Pawn < Piece
         move[:exposed_en_passant_square] = Square.new(ep_row, column, color)
       end
       move
-    elsif diagonal_move?(row, col) && (diagonal_capture?(row, col, board) || en_passant_capture?(row, col, board))
+    elsif diagonal_move?(row, col) && diagonal_capture?(row, col, board)
       { valid: true }
+    elsif en_passant_capture?(row, col, board)
+      { valid: true, en_passant_capture: true }
     else
       { valid: false }
     end
@@ -34,8 +36,10 @@ class Pawn < Piece
   def valid_forward_move?(row, col, board)
     num_squares = forward_diff(row)
     case 
-    when num_squares == 1 || num_squares == 2
+    when num_squares == 1
       board.at(row, col).nil?
+    when num_squares == 2
+      board.at(row, col).nil? && self.row == @start_row
     else
       false
     end
@@ -58,7 +62,7 @@ class Pawn < Piece
   end
 
   def en_passant_capture?(row, col, board)
-    en_passant_square = board.en_passant_square
+    en_passant_square = board.exposed_en_passant_square
     if (!en_passant_square.nil? && row == en_passant_square.row &&
       col == en_passant_square.column && self.color != en_passant_square.color)
       # Execute the capture
@@ -68,7 +72,7 @@ class Pawn < Piece
       else
         board.place(en_passant_square.row + 1, en_passant_square.column, nil)
       end
-      return :en_passant_capture
+      return true
     else
       return false
     end

@@ -78,28 +78,24 @@ class Board
 
   # Need to be less coupling between board & piece
   # These refactors will be made then
-  def make_move(moving_player, display_row, display_column)    
+  def make_move(moving_player, display_row, display_column) 
+    binding.pry   
     row, column = sanitize_input(display_row, display_column)
     original_row, original_column = piece_to_move.row, piece_to_move.column    
     move_to_make = piece_to_move.move_type(row, column, self)
     
     if move_to_make[:valid]
-      place(piece_to_move.row, piece_to_move.column, nil)
+      place(original_row, original_column, nil)
       place(row, column, piece_to_move)
     else
       raise InvalidMoveError, "That is an illegal move"
     end
-      
-    # if !move_to_make[:exposed_en_passant_square].nil?
-    #   self.exposed_en_passant_square 
-    # # elsif move_to_make == :en_passant_capture
-    # #   place(piece_to_move.row, piece_to_move.column, nil)
-    # #   place(row, column, piece_to_move)
-    # # elsif move_to_make.has_key?(:en_passant_square)
-    # #   self.en_passant_square = move_to_make[:en_passant_square]
-    # #   place(piece_to_move.row, piece_to_move.column, nil)
-    # #   place(row, column, piece_to_move)
-    # # end
+    
+    # Special cases
+    if move_to_make[:en_passant_capture]
+      place(exposed_en_passant_square.row, exposed_en_passant_square.column, nil)
+    end
+    self.exposed_en_passant_square = move_to_make[:exposed_en_passant_square]
         
     king = find_players_king(moving_player)
     if !king.nil? && king_in_check?(moving_player)
