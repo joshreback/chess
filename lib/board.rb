@@ -79,33 +79,42 @@ class Board
   # Need to be less coupling between board & piece
   # These refactors will be made then
   def make_move(moving_player, display_row, display_column) 
-    binding.pry   
-    row, column = sanitize_input(display_row, display_column)
+    # Get input about the move
+    to_row, to_column             = sanitize_input(display_row, display_column)
     original_row, original_column = piece_to_move.row, piece_to_move.column    
-    move_to_make = piece_to_move.move_type(row, column, self)
-    
-    if move_to_make[:valid]
-      place(original_row, original_column, nil)
-      place(row, column, piece_to_move)
-    else
-      raise InvalidMoveError, "That is an illegal move"
-    end
-    
+    move_to_make                  = piece_to_move.move_type(to_row, to_column, self)
+    raise InvalidMoveError, "That is an illegal move" if !move_to_make[:valid]
+      
+    # Execute the move
+    place(original_row, original_column, nil)
+    place(to_row, to_column, piece_to_move)
+
     # Special cases
+    # 1) En passant
     if move_to_make[:en_passant_capture]
-      place(exposed_en_passant_square.row, exposed_en_passant_square.column, nil)
+      row_to_clear = moving_player == :white ? to_row - 1 : to_row + 1
+      place(row_to_clear, to_column, nil)
     end
     self.exposed_en_passant_square = move_to_make[:exposed_en_passant_square]
-        
+    
+    # 2) Castling
+    castle_type = move_to_make[:castle]
+    if !!castle_type
+      rook = move_to_make[:rook]
+      place(rook.row, rook.column, nil)
+      rook_col = castle_type == :right ? to_column - 1 : to_column + 1
+      place(to_row, rook_col, rook)  # place rook
+    end
+
     king = find_players_king(moving_player)
     if !king.nil? && king_in_check?(moving_player)
       # restore original positions
       place(original_row, original_column, piece_to_move)
-      place(row, column, nil)
+      place(to_row, to_column, nil)
       raise KingInCheckError
     end    
 
-    piece = self.at(row, column)
+    piece = self.at(to_row, to_column)
     piece.moved = true if piece.is_a?(King) or piece.is_a?(Rook)
   end
 

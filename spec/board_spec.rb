@@ -149,6 +149,70 @@ describe Board do
       expect(board.locate_piece(5, 4)).to eq piece_to_move  # Piece moved from square
     end
 
+    it 'correctly executes a castle - white, right' do
+      empty_board.place(0, 4, King.new({ row: 0, column: 4, color: :white }))
+      empty_board.place(0, 7, Rook.new({ row: 0, column: 7, color: :white }))
+
+      # Creates a scenario like this:
+      # 8    |    |    |    |    |    |    |
+      # ---------------------------------------
+      # 7    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 6    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 5    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 4    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 3    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 2    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 1    |    |    |    | WK |    |    | WR
+      #   -------------------------------------
+      #   -------------------------------------
+      #   1  | 2  | 3  | 4  | 5  | 6  | 7  | 8
+            
+      empty_board.locate_piece(1, 5)
+      empty_board.make_move(:white, 1, 7)
+
+      expect(empty_board.at(0, 6)).to eq King.new({ row: 0, column: 6, color: :white})
+      expect(empty_board.at(0, 5)).to eq Rook.new({ row: 0, column: 5, color: :white})
+      expect(empty_board.at(0, 7)).to be_nil
+    end
+
+    it 'correctly executes a castle - black, left' do
+      empty_board.place(7, 4, King.new({ row: 7, column: 4, color: :black }))
+      empty_board.place(7, 0, Rook.new({ row: 0, column: 7, color: :black }))
+
+      # Creates a scenario like this:
+      # 8 WR |    |    |    | BK |    |    |
+      # ---------------------------------------
+      # 7    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 6    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 5    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 4    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 3    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 2    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 1    |    |    |    |    |    |    | 
+      #   -------------------------------------
+      #   -------------------------------------
+      #   1  | 2  | 3  | 4  | 5  | 6  | 7  | 8
+
+      empty_board.locate_piece(8, 5)
+      empty_board.make_move(:black, 8, 3)
+
+      expect(empty_board.at(7, 2)).to eq King.new({ row: 7, column: 2, color: :black})
+      expect(empty_board.at(7, 3)).to eq Rook.new({ row: 7, column: 3, color: :black})
+      expect(empty_board.at(7, 0)).to be_nil
+    end
+
     it 'raises error when trying to make illegal move' do
       piece_to_move = board.locate_piece(2, 4)
 

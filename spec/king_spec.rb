@@ -51,7 +51,6 @@ describe King do
         board.place(0, 7, Rook.new({ row: 0, column: 7, color: :white }))
         
         expect(king.castle?(0, 6, board)).to be true
-        expect(board.at(0, 5)).to eq Rook.new ({ row: 0, column: 5, color: :white})
       end
 
       it 'accepts a castle to the left' do
@@ -59,7 +58,6 @@ describe King do
         board.place(0, 0, Rook.new({ row: 0, column: 0, color: :white }))
         
         expect(king.castle?(0, 1, board)).to be true
-        expect(board.at(0, 2)).to eq Rook.new ({ row: 0, column: 2, color: :white})
       end
 
       it 'rejects a castle to the right with a piece in the way' do
@@ -96,7 +94,6 @@ describe King do
         board.place(7, 7, Rook.new({ row: 7, column: 7, color: :black }))
         
         expect(king.castle?(7, 6, board)).to be true
-        expect(board.at(7, 5)).to eq Rook.new ({ row: 7, column: 5, color: :black})
       end
 
       it 'accepts a castle to the left' do
@@ -104,7 +101,6 @@ describe King do
         board.place(7, 0, Rook.new({ row: 7, column: 0, color: :black }))
         
         expect(king.castle?(7, 1, board)).to be true
-        expect(board.at(7, 2)).to eq Rook.new ({ row: 7, column: 2, color: :black})
       end
 
       it 'rejects a castle to the right with a piece in the way' do

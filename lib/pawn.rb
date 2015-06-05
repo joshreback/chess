@@ -20,7 +20,7 @@ class Pawn < Piece
     elsif diagonal_move?(row, col) && diagonal_capture?(row, col, board)
       { valid: true }
     elsif en_passant_capture?(row, col, board)
-      { valid: true, en_passant_capture: true }
+      move = { valid: true, en_passant_capture: true }
     else
       { valid: false }
     end
@@ -63,18 +63,9 @@ class Pawn < Piece
 
   def en_passant_capture?(row, col, board)
     en_passant_square = board.exposed_en_passant_square
-    if (!en_passant_square.nil? && row == en_passant_square.row &&
-      col == en_passant_square.column && self.color != en_passant_square.color)
-      # Execute the capture
-      # If the square that's moving is white, set the square behind it to nil
-      if color == :white
-        board.place(en_passant_square.row - 1, en_passant_square.column, nil)
-      else
-        board.place(en_passant_square.row + 1, en_passant_square.column, nil)
-      end
-      return true
-    else
-      return false
-    end
+    return (!en_passant_square.nil? &&
+      row == en_passant_square.row &&
+      col == en_passant_square.column &&
+      self.color != en_passant_square.color)
   end
 end

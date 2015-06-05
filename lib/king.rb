@@ -14,6 +14,12 @@ class King < Piece
   attr_accessor :checked, :moved
 
   def move_type(row, column, board)
+    if castle?(row, column, board)
+      move = { valid: true, castle: determine_castle_type(row, column) }
+      move[:rook] = determine_castle_rook(board, move[:castle])
+      return move
+    end
+      
     legal = diagonal?(row, column, CAN_COVER) || straight?(row, column, CAN_COVER)
     return {valid: false} if !legal
 
@@ -52,27 +58,23 @@ class King < Piece
   end
 
   def castle?(row, column, board)
-    return false if moved == true or checked == true
+    return false if moved || checked
 
     castle_type = determine_castle_type(row, column)
     return false if castle_type.nil?
 
-    rook = determine_rook(board, castle_type)
+    rook = determine_castle_rook(board, castle_type)
     return false if rook.moved or rook.color != color
     
     castle_columns = determine_castle_columns(castle_type)
     castle_squares = castle_columns.map { |c| board.at(row, c) }
     return false if !castle_squares.compact.empty? or castling_through_check?(board, castle_columns)
 
-    if castle_type == :left
-      board.place(rook.row, rook.column, nil)
-      board.place(row, 2, rook)
-    else
-      board.place(rook.row, rook.column, nil)
-      board.place(row, 5, rook)
-    end
-
     return true
+  end
+
+  def determine_castle_rook(board, castle_type)
+    castle_type == :right ? board.at(row, column + 3) : board.at(row, column - 4)
   end
 
   private
@@ -81,7 +83,7 @@ class King < Piece
     case
     when row == self.row && column - self.column == 2
       :right
-    when row == self.row && self.column - column == 3
+    when row == self.row && self.column - column == 2
       :left
     else
       nil
@@ -94,10 +96,6 @@ class King < Piece
     else
       [column - 1, column - 2, column - 3]
     end
-  end
-
-  def determine_rook(board, castle_type)
-    castle_type == :right ? board.at(row, column + 3) : board.at(row, column - 4)
   end
 
   def castling_through_check?(board, castle_columns)
