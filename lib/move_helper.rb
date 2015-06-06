@@ -20,6 +20,21 @@ module MoveHelper
     return validity(move_squares)
   end
 
+  def determine_check_squares(row, column, board)
+    if self.row != row
+      line = board.get_column(column)
+      direction = :row
+      other_square = row
+    else
+      line = board.get_row(row)
+      direction = :column
+      other_square = column
+    end
+    my_square    = self.send(direction)
+    move_squares = extract_move_squares(line, my_square, other_square)
+    move_squares
+  end
+
   def valid_diagonal_move?(row, column, board)
     return false if ((row - self.row).abs != (column - self.column).abs || row == self.row)
     

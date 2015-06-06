@@ -358,4 +358,48 @@ describe Board do
       expect(empty_board.at(0, 1)).to be_nil
     end
   end
+
+  describe 'identify_check_squares' do
+    it 'identifies intermediate squares between king and rook' do
+      king = King.new({ row: 0, column: 0, color: :white })
+      empty_board.place(0, 0, king)
+      rook = Rook.new({ row: 5, column: 0, color: :black })
+      empty_board.place(5, 0, rook)
+
+      # Creates a board like this
+      # 8    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 7    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 6 BR |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 5    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 4    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 3    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 2    |    |    |    |    |    |    |
+      #   -------------------------------------
+      # 1 WK |    |    |    |    |    |    |
+      #   -------------------------------------
+      #   -------------------------------------
+      #   1  | 2  | 3  | 4  | 5  | 6  | 7  | 8
+
+      check_squares = empty_board.identify_check_squares(rook, king)
+      expect(check_squares.size).to eq 4
+      expect(check_squares).to include [1, 0]
+      expect(check_squares).to include [2, 0]
+      expect(check_squares).to include [3, 0]
+      expect(check_squares).to include [4, 0]
+    end
+  end
+
+
+
+
+
+
+
+
 end

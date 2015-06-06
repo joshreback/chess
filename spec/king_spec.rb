@@ -3,6 +3,73 @@ require 'pry'
 describe King do
   let(:board) { Board.new(empty=true) }
 
+  describe 'all_possible_moves' do
+    it 'returns all possible rows/columns' do
+      king = King.new({ row: 3, column: 3, color: :white })
+      board.place(3, 3, king)
+      
+      moves = king.all_possible_moves(board)
+
+      expect(moves.size).to eq 8
+      expect(moves).to include [3, 4]
+      expect(moves).to include [3, 2]
+      expect(moves).to include [4, 3]
+      expect(moves).to include [2, 3]  
+      expect(moves).to include [4, 4]
+      expect(moves).to include [2, 2]
+      expect(moves).to include [4, 2]
+      expect(moves).to include [2, 4]
+    end
+
+    it 'excludes squares which are occupied by same colored piece' do
+      king = King.new({ row: 3, column: 3, color: :white })
+      board.place(3, 3, king)
+      board.place(3, 4, Pawn.new({ row: 3, column: 4, color: :white }))
+      board.place(4, 4, Pawn.new({ row: 4, column: 4, color: :white }))
+      
+      moves = king.all_possible_moves(board)
+
+      expect(moves.size).to eq 6
+      expect(moves).to include [3, 2]
+      expect(moves).to include [4, 3]
+      expect(moves).to include [2, 3]
+      expect(moves).to include [2, 2]
+      expect(moves).to include [4, 2]
+      expect(moves).to include [2, 4]
+    end
+
+    it 'excludes squares which are outside by same colored piece' do
+      king = King.new({ row: 3, column: 3, color: :white })
+      board.place(3, 3, king)
+      board.place(3, 4, Pawn.new({ row: 3, column: 4, color: :white }))
+      board.place(4, 4, Pawn.new({ row: 4, column: 4, color: :white }))
+      
+      moves = king.all_possible_moves(board)
+
+      expect(moves.size).to eq 6
+      expect(moves).to include [3, 2]
+      expect(moves).to include [4, 3]
+      expect(moves).to include [2, 3]
+      expect(moves).to include [2, 2]
+      expect(moves).to include [4, 2]
+      expect(moves).to include [2, 4]
+    end
+
+    it 'does not exclude squares occupied by opposite colored pieces' do
+      king = King.new({ row: 0, column: 3, color: :white })
+      board.place(0, 3, king)
+      
+      moves = king.all_possible_moves(board)
+
+      expect(moves.size).to eq 5
+      expect(moves).to include [0, 2]
+      expect(moves).to include [0, 4]
+      expect(moves).to include [1, 2]
+      expect(moves).to include [1, 3]  
+      expect(moves).to include [1, 4]
+    end
+  end
+
   describe 'move_type' do
     context 'basic move functionality' do
       let(:king)    { King.new({ row: 4, column: 1, color: :white })}

@@ -143,6 +143,22 @@ class Board
     !!can_target
   end
 
+  def identify_check_squares(checking_piece, king)
+    direction = checking_piece.row != king.row ? :vertical : :horizontal
+    if direction = :vertical
+      if checking_piece.row > king.row
+        rows = (king.row+1...checking_piece.row)
+      else
+        rows = (checking_piece.row+1...king.row)
+      end
+      squares = []
+      rows.each do |r|
+        squares << [r, king.column]
+      end
+    end
+    return squares
+  end
+
   private
 
   def starting_state

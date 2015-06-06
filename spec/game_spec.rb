@@ -68,9 +68,4 @@ describe Game do
       }.to output(/That is an illegal move/).to_stdout
     end
   end
-
-  describe 'handle_promoted_pawn' do
-    game.start_new_turn()
-    
-  end
 end

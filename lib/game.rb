@@ -61,6 +61,7 @@ class Game
       puts "That is not a valid input"
     else
       board.captured_pieces[current].delete_at(response)
+      board.captured_pieces[current] << "Pawn"
     end
   end
 end

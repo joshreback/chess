@@ -13,6 +13,25 @@ class King < Piece
 
   attr_accessor :checked, :moved
 
+  def all_possible_moves(board)
+    moves = []
+    moves << [row, column - 1]
+    moves << [row, column + 1]
+    moves << [row + 1, column]
+    moves << [row - 1, column]
+    moves << [row - 1, column - 1]
+    moves << [row + 1, column + 1]
+    moves << [row - 1, column + 1]
+    moves << [row + 1, column - 1]
+    moves = moves.select { |square|
+      piece = board.at(square[0], square[1])
+      piece.nil? || piece.color != color
+    }.reject { |square| 
+      square.any? { |s| s < 0 || s > 7 }
+    }
+    moves
+  end
+
   def move_type(row, column, board)
     if castle?(row, column, board)
       move = { valid: true, castle: determine_castle_type(row, column) }
