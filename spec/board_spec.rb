@@ -213,6 +213,75 @@ describe Board do
       expect(empty_board.at(7, 0)).to be_nil
     end
 
+    context 'pawn promotion' do
+      it 'returns an empty array when no pieces have been captured' do
+        promote_pawn = Pawn.new({ row: 6, column: 1, color: :white })
+        empty_board.place(6, 1, promote_pawn)
+
+        # Creates a scenario like this:
+        # 8    |    |    |    |    |    |    |
+        # ---------------------------------------
+        # 7    | WP |    |    |    |    |    |
+        #   -------------------------------------
+        # 6    |    |    |    |    |    |    |
+        #   -------------------------------------
+        # 5    |    |    |    |    |    |    |
+        #   -------------------------------------
+        # 4    |    |    |    |    |    |    |
+        #   -------------------------------------
+        # 3    |    |    |    |    |    |    |
+        #   -------------------------------------
+        # 2    |    |    |    |    |    |    |
+        #   -------------------------------------
+        # 1    |    |    |    |    |    |    | 
+        #   -------------------------------------
+        #   -------------------------------------
+        #   1  | 2  | 3  | 4  | 5  | 6  | 7  | 8
+
+        empty_board.locate_piece(7, 2)
+        move = empty_board.make_move(:white, 8, 2)
+
+        expect(move).to eq []
+      end
+
+      it 'returns proper list of captured pieces' do
+        promote_pawn = Pawn.new({ row: 6, column: 1, color: :white })
+        empty_board.place(6, 1, promote_pawn)
+        empty_board.place(0, 0, Rook.new({row: 0, column: 0, color: :white}))
+        empty_board.place(0, 1, Rook.new({row: 0, column: 1, color: :black}))
+
+        # Creates a scenario like this:
+        # 8    |    |    |    |    |    |    |
+        # ---------------------------------------
+        # 7    | WP |    |    |    |    |    |
+        #   -------------------------------------
+        # 6    |    |    |    |    |    |    |
+        #   -------------------------------------
+        # 5    |    |    |    |    |    |    |
+        #   -------------------------------------
+        # 4    |    |    |    |    |    |    |
+        #   -------------------------------------
+        # 3    |    |    |    |    |    |    |
+        #   -------------------------------------
+        # 2    |    |    |    |    |    |    |
+        #   -------------------------------------
+        # 1 WR | BR |    |    |    |    |    | 
+        #   -------------------------------------
+        #   -------------------------------------
+        #   1  | 2  | 3  | 4  | 5  | 6  | 7  | 8
+
+        # Capture the white rook
+        empty_board.locate_piece(1, 2)
+        empty_board.make_move(:black, 1, 1)
+
+        # Then, promote the pawn
+        empty_board.locate_piece(7, 2)
+        move = empty_board.make_move(:white, 8, 2)
+
+        expect(move).to eq ["Rook"]
+      end
+    end
+
     it 'raises error when trying to make illegal move' do
       piece_to_move = board.locate_piece(2, 4)
 

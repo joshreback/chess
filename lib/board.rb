@@ -10,9 +10,10 @@ class Board
 
   def initialize(empty=false)
     self.contents = empty ? empty_board() : starting_state()
+    self.captured_pieces = { :white => [], :black => [] }
   end
 
-  attr_accessor :contents, :exposed_en_passant_square, :piece_to_move
+  attr_accessor :contents, :exposed_en_passant_square, :piece_to_move, :captured_pieces
 
   def to_s
     output = ""
@@ -86,10 +87,30 @@ class Board
     raise InvalidMoveError, "That is an illegal move" if !move_to_make[:valid]
       
     # Execute the move
+    piece_to_capture = self.at(to_row, to_column)
     place(original_row, original_column, nil)
     place(to_row, to_column, piece_to_move)
 
-    # Special cases
+    # Add piece to list of captured pieces
+    captured_pieces[piece_to_capture.color] << piece_to_capture.class.name if !piece_to_capture.nil?
+
+    # Verify the move is ok
+    king = find_players_king(moving_player)
+    if !king.nil? && king_in_check?(moving_player)
+      # restore original positions
+      place(original_row, original_column, piece_to_move)
+      place(to_row, to_column, nil)
+      raise KingInCheckError
+    end
+
+    # Cleanup - mark the piece as moved if its a rook or a king
+    # (for castling purposes)
+    piece = self.at(to_row, to_column)
+    piece.moved = true if piece.is_a?(King) or piece.is_a?(Rook)
+
+    #################
+    # Special cases # 
+    #################
     # 1) En passant
     if move_to_make[:en_passant_capture]
       row_to_clear = moving_player == :white ? to_row - 1 : to_row + 1
@@ -106,16 +127,10 @@ class Board
       place(to_row, rook_col, rook)  # place rook
     end
 
-    king = find_players_king(moving_player)
-    if !king.nil? && king_in_check?(moving_player)
-      # restore original positions
-      place(original_row, original_column, piece_to_move)
-      place(to_row, to_column, nil)
-      raise KingInCheckError
-    end    
-
-    piece = self.at(to_row, to_column)
-    piece.moved = true if piece.is_a?(King) or piece.is_a?(Rook)
+    # 3) Promoted Pawn
+    if move_to_make[:promoted_pawn]
+      return captured_pieces[moving_player]
+    end
   end
 
   def can_target?(player, target_row, target_column)

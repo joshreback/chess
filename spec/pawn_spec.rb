@@ -116,6 +116,18 @@ describe Pawn do
           expect(!!capturing_pawn.en_passant_capture?(5, 3, board)).to eq false
         end
       end
+
+      context 'promoting pawns' do
+        it 'identifies a promotion' do
+          promote_pawn = Pawn.new({ row: 6, column: 1, color: :white })
+          board.place(6, 1, promote_pawn)
+
+          move_type = promote_pawn.move_type(7, 1, board)
+
+          expect(move_type[:valid]).to be true
+          expect(move_type[:promoted_pawn]).to be true
+        end
+      end
     end
 
     context 'black' do
@@ -216,6 +228,18 @@ describe Pawn do
           board.make_move(:white, 4, 5)   # make another move one square forward
 
           expect(!!capturing_pawn.en_passant_capture?(2, 4, board)).to eq false
+        end
+      end
+
+      context 'promoting pawns' do
+        it 'identifies a promotion' do
+          promote_pawn = Pawn.new({ row: 1, column: 1, color: :black })
+          board.place(1, 1, promote_pawn)
+
+          move_type = promote_pawn.move_type(0, 1, board)
+
+          expect(move_type[:valid]).to be true
+          expect(move_type[:promoted_pawn]).to be true
         end
       end
     end

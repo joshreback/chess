@@ -1,6 +1,9 @@
 require 'pry'
 
 class Game
+
+  class InvalidInputError < StandardError; end
+  
   def initialize
     @players = [:white, :black].cycle
     @board = Board.new()
@@ -38,12 +41,26 @@ class Game
     begin
       print "Enter x, y of square to move to >>"
       response = gets.chomp.split(",")
-      # response = [3, 4]
       x, y = response.first.to_i, response.last.to_i
-      board.make_move(current_player, x, y)
+      move = board.make_move(current_player, x, y)
+      handle_promoted_pawn(move) if move.is_a?(:Array)
     rescue Board::InvalidMoveError => e
       puts e.message
       retry
+    end
+  end
+
+  def handle_promoted_pawn(captured_pieces)
+    puts "You have promoted a pawn! Please select the piece you'd like to promote to..."
+    begin
+      captured_pieces.each_with_index { |piece, index| puts "#{index}: #{piece}" }
+      response = gets.chomp.to_i
+      acceptable_choices = (0..captured_pieces.length - 1).to_a 
+      raise InvalidInputError if !acceptable_choices.include?(response)
+    rescue InvalidInputError
+      puts "That is not a valid input"
+    else
+      board.captured_pieces[current].delete_at(response)
     end
   end
 end
