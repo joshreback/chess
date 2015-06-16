@@ -48,4 +48,59 @@ describe Bishop do
       expect(bishop.move_type(6, 3, board)[:valid]).to be false
     end
   end
+
+  describe 'determine_check_squares' do
+    it 'returns correct check squares - king on upper right' do
+      bishop = Bishop.new({row: 0, column: 0, color: :white})
+      king   = King.new({row: 4, column: 4, color: :black})
+      board.place(0, 0, bishop)
+      board.place(4, 4, king)
+
+      check_squares = bishop.determine_check_squares(king.row, king.column, board)
+
+      expect(check_squares.length).to eq 3
+      expect(check_squares.index([1, 1])).to_not be_nil
+      expect(check_squares.index([2, 2])).to_not be_nil
+      expect(check_squares.index([3, 3])).to_not be_nil
+    end
+
+    it 'returns correct check squares - king on lower right' do
+      bishop = Bishop.new({row: 4, column: 0, color: :white})
+      king   = King.new({row: 0, column: 4, color: :black})
+      board.place(4, 0, bishop)
+      board.place(0, 4, king)
+
+      check_squares = bishop.determine_check_squares(king.row, king.column, board)
+
+      expect(check_squares.length).to eq 3
+      expect(check_squares.index([3, 1])).to_not be_nil
+      expect(check_squares.index([2, 2])).to_not be_nil
+      expect(check_squares.index([1, 3])).to_not be_nil
+    end
+
+    it 'returns correct check squares - king on upper left' do
+      bishop = Bishop.new({row: 5, column: 3, color: :white})
+      king   = King.new({row: 7, column: 5, color: :black})
+      board.place(5, 3, bishop)
+      board.place(7, 5, king)
+
+      check_squares = bishop.determine_check_squares(king.row, king.column, board)
+
+      expect(check_squares.length).to eq 1
+      expect(check_squares.index([6, 4])).to_not be_nil
+    end
+
+    it 'returns correct check squares - king on lower left' do
+      bishop = Bishop.new({row: 5, column: 3, color: :white})
+      king   = King.new({row: 2, column: 0, color: :black})
+      board.place(5, 3, bishop)
+      board.place(2, 0, king)
+
+      check_squares = bishop.determine_check_squares(king.row, king.column, board)
+
+      expect(check_squares.length).to eq 2
+      expect(check_squares.index([4, 2])).to_not be_nil
+      expect(check_squares.index([3, 1])).to_not be_nil
+    end
+  end
 end

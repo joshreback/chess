@@ -52,7 +52,7 @@ describe Rook do
     context 'rows' do
       it 'returns the correct intermediate squares for rows - 1' do
         rook = Rook.new({ row: 0, column: 0, color: :white })
-        king = King.new({ row: 4, column: 0, color: :white })
+        king = King.new({ row: 4, column: 0, color: :black })
         board.place(0, 0, rook)
         board.place(4, 0, king)
 
@@ -62,7 +62,7 @@ describe Rook do
 
       it 'returns the correct intermediate squares for rows - 2' do
         rook = Rook.new({ row: 4, column: 0, color: :white })
-        king = King.new({ row: 0, column: 0, color: :white })
+        king = King.new({ row: 0, column: 0, color: :black })
         board.place(4, 0, rook)
         board.place(0, 0, king)
 
@@ -74,7 +74,7 @@ describe Rook do
     context 'columns' do
       it 'returns the correct intermediate squares for columns - 1' do
         rook = Rook.new({ row: 0, column: 0, color: :white })
-        king = King.new({ row: 0, column: 4, color: :white })
+        king = King.new({ row: 0, column: 4, color: :black })
         board.place(0, 0, rook)
         board.place(0, 4, king)
 
@@ -84,7 +84,7 @@ describe Rook do
 
       it 'returns the correct intermediate squares for rows - 2' do
         rook = Rook.new({ row: 0, column: 4, color: :white })
-        king = King.new({ row: 0, column: 0, color: :white })
+        king = King.new({ row: 0, column: 0, color: :black })
         board.place(0, 4, rook)
         board.place(0, 0, king)
 

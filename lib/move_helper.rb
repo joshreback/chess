@@ -21,7 +21,16 @@ module MoveHelper
   end
 
   def determine_check_squares(row, column, board)    
-    if self.row != row
+    if self.row != row && self.column != column
+      opts = {
+        direction: :diagonal,
+        square1_row: row,
+        square1_column: column,
+        square2_row: self.row,
+        square2_column: self.column
+      }
+
+    elsif self.row != row
       opts = {
         direction: :row,
         square1_row: [row, self.row].min,
@@ -65,8 +74,21 @@ module MoveHelper
     line
   end
 
-  def extract_check_squares(opts)
-    if opts[:direction] == :row
+  def extract_check_squares(opts)    
+    if opts[:direction] == :diagonal
+      if opts[:square1_row] > opts[:square2_row]
+        rows = (opts[:square1_row]-1).downto(opts[:square2_row]+1).to_a
+      else
+        rows = (opts[:square1_row]+1).upto(opts[:square2_row]-1).to_a
+      end
+
+      if opts[:square1_column] > opts[:square2_column]
+        columns = (opts[:square1_column]-1).downto(opts[:square2_column]+1).to_a
+      else
+        columns = (opts[:square1_column]+1).upto(opts[:square2_column]-1).to_a
+      end
+      squares = rows.zip(columns)
+    elsif opts[:direction] == :row
       squares = ((opts[:square1_row]+1)...opts[:square2_row]).collect do |row|
         [row, opts[:column]]
       end
