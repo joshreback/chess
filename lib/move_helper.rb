@@ -20,18 +20,23 @@ module MoveHelper
     return validity(move_squares)
   end
 
-  def determine_check_squares(row, column, board)
+  def determine_check_squares(row, column, board)    
     if self.row != row
-      line = board.get_column(column)
-      direction = :row
-      other_square = row
+      opts = {
+        direction: :row,
+        square1_row: [row, self.row].min,
+        square2_row: [row, self.row].max,
+        column: column 
+      }
     else
-      line = board.get_row(row)
-      direction = :column
-      other_square = column
+      opts = {
+        direction: :column,
+        square1_column: [column, self.column].min,
+        square2_column: [column, self.column].max,
+        row: row 
+      }
     end
-    my_square    = self.send(direction)
-    move_squares = extract_move_squares(line, my_square, other_square)
+    move_squares = extract_check_squares(opts)
     move_squares
   end
 
@@ -60,6 +65,19 @@ module MoveHelper
     line
   end
 
+  def extract_check_squares(opts)
+    if opts[:direction] == :row
+      squares = ((opts[:square1_row]+1)...opts[:square2_row]).collect do |row|
+        [row, opts[:column]]
+      end
+    elsif opts[:direction] == :column
+      squares = ((opts[:square1_column]+1)...opts[:square2_column]).collect do |col|
+        [opts[:row], col]
+      end
+    end
+    return squares
+  end
+
   def including_diagonal(diagonals, row, column)
     case
     when row > self.row && column > self.column then return diagonals.last
@@ -70,10 +88,7 @@ module MoveHelper
   end
 
   def validity(move_squares)
-    case
-    when is_empty?(move_squares) || is_capture?(move_squares) then true
-    else false
-    end
+    is_empty?(move_squares) || is_capture?(move_squares)
   end
 
   def is_empty?(move)
