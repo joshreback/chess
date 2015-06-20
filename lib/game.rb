@@ -43,7 +43,7 @@ class Game
       response = gets.chomp.split(",")
       x, y = response.first.to_i, response.last.to_i
       move = board.make_move(current_player, x, y)
-      handle_promoted_pawn(move) if move.is_a?(:Array)
+      handle_promoted_pawn(move) if move.is_a?(Array)
     rescue Board::InvalidMoveError => e
       puts e.message
       retry

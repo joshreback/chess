@@ -122,9 +122,8 @@ describe King do
 
       it 'accepts a castle to the left' do
         board.place(0, 4, king)
-        board.place(0, 0, Rook.new({ row: 0, column: 0, color: :white }))
-        
-        expect(king.castle?(0, 1, board)).to be true
+        board.place(0, 0, Rook.new({ row: 0, column: 0, color: :white }))        
+        expect(king.castle?(0, 2, board)).to be true
       end
 
       it 'rejects a castle to the right with a piece in the way' do
@@ -167,7 +166,7 @@ describe King do
         board.place(7, 4, king)
         board.place(7, 0, Rook.new({ row: 7, column: 0, color: :black }))
         
-        expect(king.castle?(7, 1, board)).to be true
+        expect(king.castle?(7, 2, board)).to be true
       end
 
       it 'rejects a castle to the right with a piece in the way' do

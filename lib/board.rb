@@ -59,7 +59,7 @@ class Board
     return [left, right]
   end
 
-  def king_in_check?(player)    
+  def king_in_check?(player)
     king = find_players_king(player)
     return king ? can_target?(player, king.row, king.column) : false  # only occurs in testing
   end
@@ -182,7 +182,7 @@ class Board
     can_target = false
     traverse_board(Proc.new do |piece|      
       if piece.is_a?(Piece) && piece.color != player
-        can_target = true if piece.move_type(target_row, target_column, self)
+        can_target = true if piece.move_type(target_row, target_column, self)[:valid]
       end
     end)
     !!can_target

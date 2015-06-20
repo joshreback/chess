@@ -183,10 +183,10 @@ describe Board do
 
     it 'correctly executes a castle - black, left' do
       empty_board.place(7, 4, King.new({ row: 7, column: 4, color: :black }))
-      empty_board.place(7, 0, Rook.new({ row: 0, column: 7, color: :black }))
+      empty_board.place(7, 0, Rook.new({ row: 7, column: 7, color: :black }))
 
       # Creates a scenario like this:
-      # 8 WR |    |    |    | BK |    |    |
+      # 8 BR |    |    |    | BK |    |    |
       # ---------------------------------------
       # 7    |    |    |    |    |    |    |
       #   -------------------------------------
