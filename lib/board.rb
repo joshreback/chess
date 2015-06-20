@@ -146,10 +146,14 @@ class Board
     king_moves.each do |move|
       original_piece = self.at(move.first, move.last)
       # Store piece at square
-      make_move(checked_player, move.first+1, move.last+1)
-      checkmate = false if !king_in_check?(checked_player)
-      self.place(original_row, original_column, king)
-      self.place(move.first, move.last, original_piece)
+      begin
+        make_move(checked_player, move.first+1, move.last+1)
+        checkmate = false if !king_in_check?(checked_player)
+        self.place(original_row, original_column, king)
+        self.place(move.first, move.last, original_piece)
+      rescue KingInCheckError
+      end
+      
       break if !checkmate
     end
     return false if !checkmate
