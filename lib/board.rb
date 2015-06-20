@@ -99,7 +99,7 @@ class Board
     if !king.nil? && king_in_check?(moving_player)
       # restore original positions
       place(original_row, original_column, piece_to_move)
-      place(to_row, to_column, nil)
+      place(to_row, to_column, piece_to_capture)
       raise KingInCheckError
     end
 
@@ -113,7 +113,7 @@ class Board
     #################
     # 1) En passant
     if move_to_make[:en_passant_capture]
-      row_to_clear = moving_player == :white ? to_row - 1 : to_row + 1
+      row_to_clear = moving_player == :white ? to_row - 1 : to_row + 1  # row of the captured piece
       place(row_to_clear, to_column, nil)
     end
     self.exposed_en_passant_square = move_to_make[:exposed_en_passant_square]
@@ -133,19 +133,64 @@ class Board
     end
   end
 
+  def is_checkmate?(checked_player, checking_piece, board)
+    checkmate       = true
+    king            = find_players_king(checked_player)
+    original_row    = king.row
+    original_column = king.column
+    
+    # 1. can the king move itself out of check?
+    king_moves  = king.all_possible_moves(self)
+    king_moves.each do |move|
+      # Store piece at square
+      original_piece = self.at(move.first, move.last)
+      king.make_move(move.first, move.last, self)
+      checkmate = false if king_in_check?(checked_player)
+      self.place(original_row, original_column, king)
+      self.place(move.first, move.last, original_piece)
+    end
+    return false if !checkmate
+
+    # 2. Can any of the checked player's pieces capture the checking piece?
+    # Or can any of the checked player's pieces target any of the intermediate squares?
+    squares_to_check = [[checking_piece.row, checking_piece.column]]
+    if checking_piece.is_a?(Queen) || checking_piece.is_a?(Rook) || checking_piece.is_a?(Bishop)
+      squares_to_check.concat(checking_piece.determine_check_squares(king.row, king.col, self))
+    end
+    self.rows.each do |row|
+      row.each do |piece|
+        if piece && piece.color == checked_player  # candidate piece
+          squares_to_check.each do |square|
+            if piece.move_type(square.first, square.last, self)[:valid]
+              original_piece_row    = piece.row
+              original_piece_column = piece.column
+              self.place(square.first, square.last, piece)
+              self.place(original_piece_row, original_piece_column, nil)
+              checkmate = false if !king_in_check(checked_player)
+              # restore pieces
+              self.place(square.row, square.column, checking_piece)
+              self.place(original_piece_row, original_piece_column, piece)
+            end
+          end
+        end
+      end
+    end
+    return false if !checkmate
+  end
+
   def can_target?(player, target_row, target_column)
     can_target = false
     traverse_board(Proc.new do |piece|      
       if piece.is_a?(Piece) && piece.color != player
         can_target = true if piece.move_type(target_row, target_column, self)
       end
-    end)    
+    end)
     !!can_target
   end
 
   def identify_check_squares(checking_piece, king)
     direction = checking_piece.row != king.row ? :vertical : :horizontal
-    if direction = :vertical
+    if direction == :vertical
       if checking_piece.row > king.row
         rows = (king.row+1...checking_piece.row)
       else
