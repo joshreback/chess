@@ -134,20 +134,23 @@ class Board
   end
 
   def is_checkmate?(checked_player, checking_piece)
+    binding.pry
     checkmate       = true
     king            = find_players_king(checked_player)
     original_row    = king.row
     original_column = king.column
     
     # 1. can the king move itself out of check?
+    self.piece_to_move = king
     king_moves  = king.all_possible_moves(self)
     king_moves.each do |move|
-      # Store piece at square
       original_piece = self.at(move.first, move.last)
-      king.make_move(move.first, move.last, self)
-      checkmate = false if king_in_check?(checked_player)
+      # Store piece at square
+      make_move(checked_player, move.first+1, move.last+1)
+      checkmate = false if !king_in_check?(checked_player)
       self.place(original_row, original_column, king)
       self.place(move.first, move.last, original_piece)
+      break if !checkmate
     end
     return false if !checkmate
 
