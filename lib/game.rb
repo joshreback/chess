@@ -48,8 +48,15 @@ class Game
       puts e.message
       retry
     end
-    if board.king_in_check?(current_player)
-      if board.is_checkmate?(current_player, board.piece_to_move)
+    if board.king_in_check?(other_player)
+      if board.is_checkmate?(other_player, board.piece_to_move)
+        puts "Game over! #{current_player} wins"
+      end
+    end
+  end
+
+  def other_player
+    current_player == :white ? :black : :white
   end
 
   def handle_promoted_pawn(captured_pieces)
