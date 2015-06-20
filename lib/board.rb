@@ -144,14 +144,14 @@ class Board
     self.piece_to_move = king
     king_moves  = king.all_possible_moves(self)
     king_moves.each do |move|
-      original_piece = self.at(move.first, move.last)
       # Store piece at square
+      original_piece = self.at(move.first, move.last)
       begin
         make_move(checked_player, move.first+1, move.last+1)
-        checkmate = false if !king_in_check?(checked_player)
+        checkmate = false
         self.place(original_row, original_column, king)
         self.place(move.first, move.last, original_piece)
-      rescue KingInCheckError
+      rescue KingInCheckError, InvalidMoveError
       end
       
       break if !checkmate
@@ -167,16 +167,17 @@ class Board
     self.rows.each do |row|
       row.each do |piece|
         if piece && piece.color == checked_player  # candidate piece
+          self.piece_to_move = piece
+          original_row = piece.row
+          original_column = piece.column
           squares_to_check.each do |square|
-            if piece.move_type(square.first, square.last, self)[:valid]
-              original_piece_row    = piece.row
-              original_piece_column = piece.column
-              self.place(square.first, square.last, piece)
-              self.place(original_piece_row, original_piece_column, nil)
-              checkmate = false if !king_in_check(checked_player)
-              # restore pieces
-              self.place(square.row, square.column, checking_piece)
-              self.place(original_piece_row, original_piece_column, piece)
+            other_piece = self.at(move.first, move.last)
+            begin
+              make_move(checked_player, move.first+1, move.last+1)
+              self.place(original_row, original_column, piece)
+              self.place(move.first, move.last, other_piece)
+              checkmate = false
+            rescue KingInCheckError, InvalidMoveError
             end
           end
         end
