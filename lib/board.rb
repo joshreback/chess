@@ -133,7 +133,7 @@ class Board
     end
   end
 
-  def is_checkmate?(checked_player, checking_piece, board)
+  def is_checkmate?(checked_player, checking_piece)
     checkmate       = true
     king            = find_players_king(checked_player)
     original_row    = king.row

@@ -48,6 +48,8 @@ class Game
       puts e.message
       retry
     end
+    if board.king_in_check?(current_player)
+      if board.is_checkmate?(current_player, board.piece_to_move)
   end
 
   def handle_promoted_pawn(captured_pieces)
