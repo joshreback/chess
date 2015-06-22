@@ -23,11 +23,11 @@ class King < Piece
     moves << [row + 1, column + 1]
     moves << [row - 1, column + 1]
     moves << [row + 1, column - 1]
-    moves = moves.select { |square|
+    moves = moves.reject { |square| 
+      square.any? { |s| s < 0 || s > 7 }
+    }.select { |square|
       piece = board.at(square[0], square[1])
       piece.nil? || piece.color != color
-    }.reject { |square| 
-      square.any? { |s| s < 0 || s > 7 }
     }
     moves
   end

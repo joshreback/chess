@@ -134,7 +134,6 @@ class Board
   end
 
   def is_checkmate?(checked_player, checking_piece)
-    binding.pry
     checkmate       = true
     king            = find_players_king(checked_player)
     original_row    = king.row
@@ -162,20 +161,20 @@ class Board
     # Or can any of the checked player's pieces target any of the intermediate squares?
     squares_to_check = [[checking_piece.row, checking_piece.column]]
     if checking_piece.is_a?(Queen) || checking_piece.is_a?(Rook) || checking_piece.is_a?(Bishop)
-      squares_to_check.concat(checking_piece.determine_check_squares(king.row, king.col, self))
+      squares_to_check.concat(checking_piece.determine_check_squares(king.row, king.column, self))
     end
-    self.rows.each do |row|
+    contents.each do |row|
       row.each do |piece|
         if piece && piece.color == checked_player  # candidate piece
           self.piece_to_move = piece
           original_row = piece.row
           original_column = piece.column
           squares_to_check.each do |square|
-            other_piece = self.at(move.first, move.last)
+            other_piece = self.at(square.first, square.last)
             begin
-              make_move(checked_player, move.first+1, move.last+1)
+              make_move(checked_player, square.first+1, square.last+1)
               self.place(original_row, original_column, piece)
-              self.place(move.first, move.last, other_piece)
+              self.place(square.first, square.last, other_piece)
               checkmate = false
             rescue KingInCheckError, InvalidMoveError
             end
@@ -183,7 +182,7 @@ class Board
         end
       end
     end
-    return false if !checkmate
+    return checkmate
   end
 
   def can_target?(player, target_row, target_column)
